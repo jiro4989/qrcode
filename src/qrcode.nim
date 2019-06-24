@@ -3,11 +3,16 @@
 
 type
   QrQcode* = ref object
-  ModeIndicator* = enum ## 4bit (固定)
-    miNumeric = 0b0001'u8
-    miAlphaNumeric = 0b0010
-    mi8Bit = 0b0100
-    miKanji = 0b1000
+  QrMode* = enum ## 4bit (固定)
+    qmNumeric = 0'u8
+    qmAlphaNumeric = 1 shl 1
+    qmByte8Bit = 1 shl 2
+    qmKanji = 1 shl 3 ## 実装しない
+  QrErrorCorrectLevel* = enum ## エラー訂正レベル
+    qeclM = 0
+    qeclL = 1
+    qeclH = 2
+    qeclQ = 3
   
 proc split2(text: string): seq[string] =
   var s: string
@@ -38,3 +43,4 @@ proc newQrCode*(text: string): QrQcode =
     encodedData.add b
   # 終端パターンの追加
   encodedData.add 0b0000
+  # QRCodeモデル2では8bitごとにデータを区切る
